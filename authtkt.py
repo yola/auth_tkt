@@ -10,7 +10,7 @@ import logging
 import os
 
 from M2Crypto import EVP
-from yocommon.util import get_config
+from yoconfig.util import get_config
 
 log = logging.getLogger(__name__)
 
