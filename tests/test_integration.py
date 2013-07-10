@@ -22,6 +22,5 @@ class IntegrationTests(unittest.TestCase):
     def test_get_ticket_data_returns_proper_data(self):
         data = get_ticket_data(self.cookie)
         self.assertTrue(all(
-            [key in data for key in (
-                'surname', 'name', 'id', 'tokens')]
+            key in data for key in ('surname', 'name', 'id', 'tokens')
         ))
