@@ -2,8 +2,9 @@ import unittest
 import zlib
 
 from authtkt.ticket import AuthTkt
-from authtkt.encrypted import (EncryptedAuthTkt, _encrypt_userdata,
-                               _decrypt_userdata, _encipher, _decipher)
+from authtkt.encrypted import (EncryptedAuthTkt, _derive_keys,
+                               _encrypt_userdata, _decrypt_userdata, _encipher,
+                               _decipher)
 
 
 class EncryptedAuthTktTests(unittest.TestCase):
@@ -46,6 +47,14 @@ class DataEncryptionTests(unittest.TestCase):
                       + ciphertext[byte + 1:])
         return ''.join(ciphertext.encode('base64').split())
 
+    def test_derive_keys_salted(self):
+        salt = self.ciphertext.decode('base64')[16:48]
+        hmackey, enckey, salt = _derive_keys(self.ciphertext, salt)
+        expected_hmackey = 'xbNKad7dTFt7wNYCxkFLVwXtMuiF9eCKCXt3oabIPj0='
+        expected_enckey = '7IJke6/xvQSdz/L1tFrvkBjHGWVD5hn5WneFaXTytT8='
+        self.assertEqual(hmackey, expected_hmackey.decode('base64'))
+        self.assertEqual(enckey, expected_enckey.decode('base64'))
+
     def test_encrypt_userdata(self):
         ciphertext = _encrypt_userdata(self.cleartext, self.secret)
         ciphertext = ciphertext.decode('base64')
@@ -63,8 +72,13 @@ class DataEncryptionTests(unittest.TestCase):
         self.assertRaises(zlib.error, _decrypt_userdata, ciphertext,
                           self.secret)
 
+    def test_derive_keys(self):
+        hmackey, enckey, salt = _derive_keys(self.secret)
+        self.assertNotEqual(hmackey, enckey)
+        self.assertTrue(salt)
 
-class HelperFunctionTests(unittest.TestCase):
+
+class CipherHelperTests(unittest.TestCase):
     plaintext = 'hello there'
     ciphertext = 'Z\xed\xc5\xe8\xb2&\x8b0\x8cK\x05'
     key = '1' * 16

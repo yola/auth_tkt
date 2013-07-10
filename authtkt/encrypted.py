@@ -55,11 +55,10 @@ class EncryptedAuthTkt(object):
         return self.authticket.cookie_value()
 
 
-def _encrypt_userdata(cleartext, secret):
-    cleartext = json.dumps(cleartext)
+def _derive_keys(secret, salt=None):
+    if salt is None:
+        salt = os.urandom(32)
 
-    # get 256 bit random encryption salt
-    salt = os.urandom(32)
     # derive 256 bit encryption key using the pbkdf2 standard
     key = EVP.pbkdf2(secret, salt, iter=1000, keylen=32)
 
@@ -68,6 +67,14 @@ def _encrypt_userdata(cleartext, secret):
     hmacKey = hashlib.sha256(key + 'MAC').digest()
     encKey = hashlib.sha256(key + 'encrypt').digest()
     del key
+
+    return hmacKey, encKey, salt
+
+
+def _encrypt_userdata(cleartext, secret):
+    cleartext = json.dumps(cleartext)
+
+    hmacKey, encKey, salt = _derive_keys(secret)
 
     # get 128 bit random iv
     iv = os.urandom(16)
@@ -96,14 +103,7 @@ def _decrypt_userdata(ciphertext, secret):
     iv, salt, ciphertext = (
         ciphertext[:16], ciphertext[16:48], ciphertext[48:])
 
-    # derive 256 bit key using the pbkdf2 standard
-    key = EVP.pbkdf2(secret, salt, iter=1000, keylen=32)
-
-    # Derive encryption key and HMAC key from it
-    # See Practical Cryptography section 8.4.1.
-    hmacKey = hashlib.sha256(key + 'MAC').digest()
-    encKey = hashlib.sha256(key + 'encrypt').digest()
-    del key
+    hmacKey, encKey, salt = _derive_keys(secret, salt)
 
     # decrypt
     try:
