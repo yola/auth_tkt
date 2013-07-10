@@ -1,5 +1,4 @@
 from gzip import zlib
-import cStringIO
 import hashlib
 import hmac
 import json
@@ -86,8 +85,8 @@ def _encrypt_userdata(cleartext):
     del hmacKey
 
     try:
-        ciphertext = _encipher(
-            zlib.compress(cleartext + mac), encKey, iv, 'aes_128_ofb')
+        ciphertext = _encipher(zlib.compress(cleartext + mac),
+                               encKey, iv, 'aes_128_ofb')
     except EVP.EVPError, e:
         raise EncryptionError(str(e))
 
@@ -115,8 +114,7 @@ def _decrypt_userdata(ciphertext):
 
     # decrypt
     try:
-        ret = zlib.decompress(
-            _decipher(ciphertext, encKey, iv, 'aes_128_ofb'))
+        ret = zlib.decompress(_decipher(ciphertext, encKey, iv, 'aes_128_ofb'))
     except EVP.EVPError, e:
         raise DecryptionError(str(e))
     finally:
@@ -135,33 +133,15 @@ def _decrypt_userdata(ciphertext):
     return json.loads(ret)
 
 
-def _cipherFilter(cipher, inf, outf):
-    while True:
-        buf = inf.read()
-        if not buf:
-            break
-        outf.write(cipher.update(buf))
-    outf.write(cipher.final())
-    return outf.getvalue()
-
-
 def _decipher(ciphertext, key, iv, alg):
-    cipher = EVP.Cipher(alg=alg, key=key, iv=iv, op=0)
-    del key
-    pbuf = cStringIO.StringIO()
-    cbuf = cStringIO.StringIO(ciphertext)
-    plaintext = _cipherFilter(cipher, cbuf, pbuf)
-    pbuf.close()
-    cbuf.close()
-    return plaintext
+    return _cipherFilter(alg, key, iv, 0, ciphertext)
 
 
 def _encipher(plaintext, key, iv, alg):
-    cipher = EVP.Cipher(alg=alg, key=key, iv=iv, op=1)
+    return _cipherFilter(alg, key, iv, 1, plaintext)
+
+
+def _cipherFilter(alg, key, iv, op, input_):
+    cipher = EVP.Cipher(alg=alg, key=key, iv=iv, op=op)
     del key
-    pbuf = cStringIO.StringIO(plaintext)
-    cbuf = cStringIO.StringIO()
-    ciphertext = _cipherFilter(cipher, pbuf, cbuf)
-    pbuf.close()
-    cbuf.close()
-    return ciphertext
+    return cipher.update(input_) + cipher.final()
