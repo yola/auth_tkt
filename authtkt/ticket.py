@@ -6,13 +6,12 @@ import cStringIO
 import hashlib
 import hmac
 import json
-import logging
 import os
+import socket
+import struct
 
 from M2Crypto import EVP
 from yoconfig.util import get_config
-
-log = logging.getLogger(__name__)
 
 
 def validate(ticket, secret, ip='0.0.0.0'):
@@ -35,7 +34,7 @@ def validate(ticket, secret, ip='0.0.0.0'):
 
     digest, raw = raw[:32], raw[32:]
     ts, raw = raw[:8], raw[8:]
-    uid, extra = raw.split('!',1)
+    uid, extra = raw.split('!', 1)
     tokens, data = '', ''
 
     try:
@@ -45,7 +44,7 @@ def validate(ticket, secret, ip='0.0.0.0'):
 
     if extra:
         if '!' in extra:
-            tokens, data = extra.split('!',1)
+            tokens, data = extra.split('!', 1)
         else:
             data = extra
 
@@ -57,67 +56,60 @@ def validate(ticket, secret, ip='0.0.0.0'):
 
 
 class AuthTkt(object):
-    def __init__(self, secret, uid,
-            data='', ip='0.0.0.0', tokens=[], base64=True, ts=None):
+    def __init__(self, secret, uid, data='', ip='0.0.0.0', tokens=(),
+                 base64=True, ts=None):
         self.secret = secret
         self.uid = str(uid)
         self.data = data
         self.ip = ip
-        self.tokens = ",".join([tok.strip() for tok in tokens])
+        self.tokens = ','.join(tok.strip() for tok in tokens)
         self.base64 = base64
 
         if ts is None:
             self.ts = int(time())
         else:
-            self.ts = ts
+            self.ts = int(ts)
 
     def ticket(self):
-        v = self.cookie_value();
+        v = self.cookie_value()
         if self.base64:
-            return v.encode('base64').strip().replace("\n","")
+            return v.encode('base64').strip().replace('\n', '')
         else:
             return v
 
-    def cookie(self, cookie_name,
-            cookie_domain=None, cookie_path='/', cookie_secure=False):
+    def cookie(self, name, domain=None, path='/', secure=False):
         c = Cookie.SimpleCookie()
-        c[cookie_name] = self.ticket()
-        c[cookie_name]['path'] = cookie_path
+        c[name] = self.ticket()
+        c[name]['path'] = path
 
-        if cookie_domain:
-            c[cookie_name]['domain'] = cookie_domain
+        if domain:
+            c[name]['domain'] = domain
 
-        if cookie_secure:
-            c[cookie_name]['secure'] = 'true'
+        if secure:
+            c[name]['secure'] = 'true'
 
-        log.debug(c[cookie_name])
         return c
 
     def cookie_value(self):
-        v = '%s%08x%s!' % (self._digest(), int(self.ts), self.uid)
+        parts = ['%s%08x%s' % (self._digest(), self.ts, self.uid)]
         if self.tokens:
-            v += self.tokens + '!'
-        v += self.data
-        return v
+            parts.append(self.tokens)
+        parts.append(self.data)
+        return '!'.join(parts)
 
     def _digest(self):
         return hashlib.md5(self._digest0() + self.secret).hexdigest()
 
     def _digest0(self):
-        return hashlib.md5(''.join([self._encode_ip(self.ip),
-                self._encode_ts(self.ts), self.secret, self.uid, '\0',
-                self.tokens, '\0', self.data])
-            ).hexdigest()
+        parts = (self._encode_ip(self.ip), self._encode_ts(self.ts),
+                 self.secret, self.uid, '\0', self.tokens, '\0', self.data)
+        return hashlib.md5(''.join(parts)).hexdigest()
 
     def _encode_ip(self, ip):
-        return ''.join(map(chr, map(int, self.ip.split('.'))))
+        return socket.inet_aton(ip)
 
     def _encode_ts(self, ts):
-        ts = ((ts & 0xff000000) >> 24,
-              (ts & 0xff0000) >> 16,
-              (ts & 0xff00) >> 8,
-               ts & 0xff)
-        return ''.join(map(chr, ts))
+        return struct.pack('!I', ts)
 
 
 class DecryptionError(Exception):
