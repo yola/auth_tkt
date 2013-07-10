@@ -5,7 +5,6 @@ import json
 import os
 
 from M2Crypto import EVP
-from yoconfig.util import get_config
 
 from authtkt.ticket import AuthTkt
 
@@ -25,16 +24,18 @@ class EncryptionError(Exception):
 class EncryptedAuthTkt(object):
 
     @staticmethod
-    def from_data(secret, uid, data=None, ip='0.0.0.0', tokens=(),
-                  base64=True, ts=None):
+    def from_data(authtkt_secret, payload_secret, uid, data=None, ip='0.0.0.0',
+                  tokens=(), base64=True, ts=None):
+        payload_secret = str(payload_secret)
         if data is None:
             data = {}
-        data = _encrypt_userdata(data)
-        authticket = AuthTkt(secret, uid, data, ip, tokens, base64, ts)
-        return EncryptedAuthTkt(authticket)
+        data = _encrypt_userdata(data, payload_secret)
+        authticket = AuthTkt(authtkt_secret, uid, data, ip, tokens, base64, ts)
+        return EncryptedAuthTkt(authticket, payload_secret)
 
-    def __init__(self, authticket):
+    def __init__(self, authticket, payload_secret):
         self.authticket = authticket
+        self._payload_secret = payload_secret
 
     @property
     def uid(self):
@@ -42,7 +43,7 @@ class EncryptedAuthTkt(object):
 
     @property
     def data(self):
-        return _decrypt_userdata(self.authticket.data)
+        return _decrypt_userdata(self.authticket.data, self._payload_secret)
 
     def ticket(self):
         return self.authticket.ticket()
@@ -54,12 +55,8 @@ class EncryptedAuthTkt(object):
         return self.authticket.cookie_value()
 
 
-def _encrypt_userdata(cleartext):
+def _encrypt_userdata(cleartext, secret):
     cleartext = json.dumps(cleartext)
-    secret = get_config('CRYPTO_SECRET')
-    # the crypto algorithms are unicode unfriendly
-    if isinstance(secret, unicode):
-        secret = secret.encode('utf8')
 
     # get 256 bit random encryption salt
     salt = os.urandom(32)
@@ -94,14 +91,10 @@ def _encrypt_userdata(cleartext):
         iv + salt + ciphertext).encode('base64').strip().replace('\n', '')
 
 
-def _decrypt_userdata(ciphertext):
+def _decrypt_userdata(ciphertext, secret):
     ciphertext = ciphertext.decode('base64')
     iv, salt, ciphertext = (
         ciphertext[:16], ciphertext[16:48], ciphertext[48:])
-
-    secret = get_config('CRYPTO_SECRET')
-    if isinstance(secret, unicode):
-        secret = secret.encode('utf8')
 
     # derive 256 bit key using the pbkdf2 standard
     key = EVP.pbkdf2(secret, salt, iter=1000, keylen=32)

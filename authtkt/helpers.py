@@ -11,7 +11,7 @@ def get_ticket_data(ticket):
     if not ticket:
         return None
 
-    ticket = EncryptedAuthTkt(ticket)
+    ticket = EncryptedAuthTkt(ticket, get_config('CRYPTO_SECRET'))
     data = ticket.data
     data.update({
         'id': ticket.uid,
