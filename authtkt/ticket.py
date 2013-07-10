@@ -15,22 +15,6 @@ from yoconfig.util import get_config
 log = logging.getLogger(__name__)
 
 
-def get_ticket_data(ticket):
-    """We store user information in our session hashes. You can retreive that
-    data with this function."""
-    ticket = validate(ticket, get_config('SECRET'))
-    if not ticket:
-        return None
-
-    ticket = EncryptedAuthTkt(ticket)
-    data = ticket.data
-    data.update({
-        'id': ticket.uid,
-        'tokens': ticket.authticket.tokens
-    })
-    return data
-
-
 def validate(ticket, secret, ip='0.0.0.0'):
     """Validate a given authtkt ticket for the secret and ip provided"""
     if len(ticket) < 40:

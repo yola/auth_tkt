@@ -2,7 +2,8 @@ import unittest
 
 from yoconfig.util import configure
 
-from authtkt import ticket
+from authtkt.ticket import validate
+from authtkt.helpers import get_ticket_data
 
 
 class AuthTktTests(unittest.TestCase):
@@ -20,14 +21,14 @@ class AuthTktTests(unittest.TestCase):
         configure(CRYPTO_SECRET=self.crypto_secret)
 
     def test_get_ticket_data_returns_proper_data(self):
-        data = ticket.get_ticket_data(self.cookie)
+        data = get_ticket_data(self.cookie)
         self.assertTrue(all(
             [key in data for key in (
                 'surname', 'name', 'id', 'tokens')]
         ))
 
     def test_valid_ticket_validates_correctly(self):
-        self.assertTrue(ticket.validate(self.cookie, self.secret))
+        self.assertTrue(validate(self.cookie, self.secret))
 
     def test_invalid_ticket_does_not_validate(self):
-        self.assertFalse(ticket.validate('I am a banana', self.secret))
+        self.assertFalse(validate('I am a banana', self.secret))
