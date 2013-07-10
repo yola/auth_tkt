@@ -21,6 +21,8 @@ class IntegrationTests(unittest.TestCase):
 
     def test_get_ticket_data_returns_proper_data(self):
         data = get_ticket_data(self.cookie)
-        self.assertTrue(all(
-            key in data for key in ('surname', 'name', 'id', 'tokens')
-        ))
+        self.assertEqual(sorted(data), ['id', 'name', 'surname', 'tokens'])
+
+    def test_get_ticket_no_decrypt(self):
+        data = get_ticket_data(self.cookie, decrypt=False)
+        self.assertEqual(sorted(data), ['id', 'tokens'])
