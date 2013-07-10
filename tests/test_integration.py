@@ -16,8 +16,8 @@ class IntegrationTests(unittest.TestCase):
             'DYWFDODM3NXdjS1RTbERVUlVUZlV6TUxWZHRZSVpic0JxeGxuRDgyWHBjeE9ORjZB'
             'Y3pvQjlkNkU0N0xScGVVNjNmUTFpdFhOcFkwRExyUG8xdnlGWUtxZHNRTHBYUHc9P'
             'Q==')
-        configure(SECRET=self.secret)
-        configure(CRYPTO_SECRET=self.crypto_secret)
+        configure(AUTHTKT_SECRET=self.secret)
+        configure(CRYPTED_COOKIE_SECRET=self.crypto_secret)
 
     def test_get_ticket_data_returns_proper_data(self):
         data = get_ticket_data(self.cookie)

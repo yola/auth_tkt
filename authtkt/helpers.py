@@ -7,7 +7,7 @@ from authtkt.ticket import validate
 def get_ticket_data(ticket, decrypt=True):
     """We store user information in our session hashes. You can retreive that
     data with this function."""
-    ticket = validate(ticket, get_config('SECRET'))
+    ticket = validate(ticket, get_config('AUTHTKT_SECRET'))
 
     if not ticket:
         return None
@@ -18,7 +18,7 @@ def get_ticket_data(ticket, decrypt=True):
     }
 
     if decrypt:
-        ticket = EncryptedAuthTkt(ticket, get_config('CRYPTO_SECRET'))
+        ticket = EncryptedAuthTkt(ticket, get_config('CRYPTED_COOKIE_SECRET'))
         data.update(ticket.data)
 
     return data
