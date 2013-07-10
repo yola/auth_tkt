@@ -1,6 +1,6 @@
 import unittest
 
-from yocommon.util import configure
+from yoconfig.util import configure
 
 import authtkt
 

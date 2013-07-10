@@ -9,5 +9,5 @@ setup(
     url='http://github.com/yola/authtkt',
     py_modules=['authtkt'],
     test_suite='nose.collector',
-    install_requires=['M2Crypto < 1.0.0', 'yocommon < 2.0.0']
+    install_requires=['M2Crypto < 1.0.0', 'yoconfig < 2.0.0']
 )
