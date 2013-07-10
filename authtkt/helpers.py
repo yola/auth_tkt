@@ -1,6 +1,7 @@
 from yoconfig.util import get_config
 
-from authtkt.ticket import EncryptedAuthTkt, validate
+from authtkt.encrypted import EncryptedAuthTkt
+from authtkt.ticket import validate
 
 
 def get_ticket_data(ticket):
