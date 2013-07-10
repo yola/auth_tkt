@@ -1,0 +1,7 @@
+*.pyc
+.*.swp
+/*.egg-info/
+/build/
+/dist/
+/virtualenv.tar.gz
+/virtualenv/
