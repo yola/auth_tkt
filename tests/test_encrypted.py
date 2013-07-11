@@ -1,8 +1,7 @@
 import unittest
-import zlib
 
 from authtkt.ticket import AuthTkt
-from authtkt.encrypted import (EncryptedAuthTkt, _derive_keys,
+from authtkt.encrypted import (EncryptedAuthTkt, DecryptionError, _derive_keys,
                                _encrypt_userdata, _decrypt_userdata, _encipher,
                                _decipher)
 
@@ -68,8 +67,7 @@ class DataEncryptionTests(unittest.TestCase):
 
     def test_invalid_contents(self):
         ciphertext = self.flip_ciphertext_bit(byte=128)
-        # Probably should be DecryptionError...
-        self.assertRaises(zlib.error, _decrypt_userdata, ciphertext,
+        self.assertRaises(DecryptionError, _decrypt_userdata, ciphertext,
                           self.secret)
 
     def test_derive_keys(self):

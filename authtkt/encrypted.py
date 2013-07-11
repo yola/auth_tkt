@@ -107,7 +107,7 @@ def _decrypt_userdata(ciphertext, secret):
     # decrypt
     try:
         ret = zlib.decompress(_decipher(ciphertext, encKey, iv, 'aes_128_ofb'))
-    except EVP.EVPError, e:
+    except (zlib.error, EVP.EVPError), e:
         raise DecryptionError(str(e))
     finally:
         del encKey
