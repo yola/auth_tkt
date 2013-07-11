@@ -5,11 +5,11 @@ This module has two required settings:
 * `CRYPTO_SECRET`
 * `SECRET`
 
-The settings can be specified globally using yocommon's configure method
+The settings can be specified globally using yoconfig's configure method
 like so:
 
 ```python
-from yocommon.util import configure
+from yoconfig.util import configure
 configure(SECRET='secret', CRYPTO_SECRET='crypto_secret')
 ```
 
