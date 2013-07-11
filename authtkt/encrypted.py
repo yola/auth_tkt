@@ -79,7 +79,7 @@ def _encrypt_userdata(cleartext, secret):
     iv = Rand.rand_bytes(16)
 
     # Add HMAC to cleartext so that we can check during decrypt if we got
-    # the right cleartext back. We are doing sign-then-encrypt, which let's
+    # the right cleartext back. We are doing sign-then-encrypt, which lets
     # us encrypt empty cleartext (otherwise we'd need to pad with some
     # string to encrypt). Practical Cryptography by Schneier & Ferguson
     # also recommends doing it in this order in section 8.2.
