@@ -1,0 +1,5 @@
+M2Crypto < 1.0.0
+nose < 2.0.0
+pep8 < 2.0.0
+pyflakes < 1.0.0
+yoconfig < 2.0.0
