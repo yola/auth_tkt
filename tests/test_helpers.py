@@ -19,7 +19,7 @@ class IntegrationTests(unittest.TestCase):
         configure(AUTHTKT_SECRET=self.secret)
         configure(CRYPTED_COOKIE_SECRET=self.crypto_secret)
 
-    def test_get_ticket_data_returns_proper_data(self):
+    def test_get_ticket_with_data(self):
         data = get_ticket_data(self.cookie)
         self.assertEqual(sorted(data), ['id', 'name', 'surname', 'tokens'])
 
