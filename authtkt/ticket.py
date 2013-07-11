@@ -69,16 +69,12 @@ class AuthTkt(object):
         else:
             return v
 
-    def cookie(self, name, domain=None, path='/', secure=False):
+    def cookie(self, name, **kwargs):
         c = Cookie.SimpleCookie()
         c[name] = self.ticket()
-        c[name]['path'] = path
 
-        if domain:
-            c[name]['domain'] = domain
-
-        if secure:
-            c[name]['secure'] = 'true'
+        kwargs.setdefault('path', '/')
+        c[name].update(kwargs)
 
         return c
 

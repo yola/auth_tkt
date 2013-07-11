@@ -41,8 +41,8 @@ class EncryptedAuthTkt(object):
     def ticket(self):
         return self.authticket.ticket()
 
-    def cookie(self, name, domain=None, path='/', secure=False):
-        return self.authticket.cookie(name, domain, path, secure)
+    def cookie(self, name, **kwargs):
+        return self.authticket.cookie(name, **kwargs)
 
     def cookie_value(self):
         return self.authticket.cookie_value()

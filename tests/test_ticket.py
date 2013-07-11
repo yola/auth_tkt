@@ -54,7 +54,7 @@ class AuthTktTests(unittest.TestCase):
 
     def test_cookie(self):
         tkt = self.construct(base64=False)
-        c = tkt.cookie('test_cookie', 'example.com')['test_cookie']
+        c = tkt.cookie('test_cookie', domain='example.com')['test_cookie']
         self.assertEqual(c.key, 'test_cookie')
         self.assertEqual(c['path'], '/')
         self.assertEqual(c['domain'], 'example.com')
