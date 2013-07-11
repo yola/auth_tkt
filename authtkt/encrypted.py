@@ -14,12 +14,6 @@ class DecryptionError(Exception):
     """
 
 
-class EncryptionError(Exception):
-    """
-    Failed to encrypt. Can happen with wrong password, for example.
-    """
-
-
 class EncryptedAuthTkt(object):
 
     @staticmethod
@@ -87,11 +81,8 @@ def _encrypt_userdata(cleartext, secret):
         hmacKey, cleartext + iv + salt, hashlib.sha256).hexdigest()
     del hmacKey
 
-    try:
-        ciphertext = _encipher(zlib.compress(cleartext + mac),
-                               encKey, iv, 'aes_128_ofb')
-    except EVP.EVPError, e:
-        raise EncryptionError(str(e))
+    ciphertext = _encipher(zlib.compress(cleartext + mac), encKey, iv,
+                           'aes_128_ofb')
 
     return (
         iv + salt + ciphertext).encode('base64').strip().replace('\n', '')
