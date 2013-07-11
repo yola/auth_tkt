@@ -2,9 +2,8 @@ from gzip import zlib
 import hashlib
 import hmac
 import json
-import os
 
-from M2Crypto import EVP
+from M2Crypto import EVP, Rand
 
 from authtkt.ticket import AuthTkt
 
@@ -57,7 +56,7 @@ class EncryptedAuthTkt(object):
 
 def _derive_keys(secret, salt=None):
     if salt is None:
-        salt = os.urandom(32)
+        salt = Rand.rand_bytes(32)
 
     # derive 256 bit encryption key using the pbkdf2 standard
     key = EVP.pbkdf2(secret, salt, iter=1000, keylen=32)
@@ -77,7 +76,7 @@ def _encrypt_userdata(cleartext, secret):
     hmacKey, encKey, salt = _derive_keys(secret)
 
     # get 128 bit random iv
-    iv = os.urandom(16)
+    iv = Rand.rand_bytes(16)
 
     # Add HMAC to cleartext so that we can check during decrypt if we got
     # the right cleartext back. We are doing sign-then-encrypt, which let's
