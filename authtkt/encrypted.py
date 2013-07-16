@@ -57,7 +57,6 @@ def _derive_keys(secret, salt=None):
     # See Practical Cryptography section 8.4.1.
     hmacKey = hashlib.sha256(key + 'MAC').digest()
     encKey = hashlib.sha256(key + 'encrypt').digest()
-    del key
 
     return hmacKey, encKey, salt
 
@@ -77,7 +76,6 @@ def _encrypt_userdata(cleartext, secret):
     # also recommends doing it in this order in section 8.2.
     mac = hmac.new(
         hmacKey, cleartext + iv + salt, hashlib.sha256).hexdigest()
-    del hmacKey
 
     ciphertext = _encipher(zlib.compress(cleartext + mac), encKey, iv,
                            'aes_128_ofb')
@@ -98,18 +96,13 @@ def _decrypt_userdata(ciphertext, secret):
         ret = zlib.decompress(_decipher(ciphertext, encKey, iv, 'aes_128_ofb'))
     except (zlib.error, EVP.EVPError), e:
         raise DecryptionError(str(e))
-    finally:
-        del encKey
 
     # Check MAC
     mac = ret[-64:]
     ret = ret[:-64]
-    try:
-        if hmac.new(hmacKey, ret + iv + salt,
-                    hashlib.sha256).hexdigest() != mac:
-            raise DecryptionError('HMAC does not match')
-    finally:
-        del hmacKey
+    if hmac.new(hmacKey, ret + iv + salt,
+                hashlib.sha256).hexdigest() != mac:
+        raise DecryptionError('HMAC does not match')
 
     return json.loads(ret)
 
@@ -124,5 +117,4 @@ def _encipher(plaintext, key, iv, alg):
 
 def _cipherFilter(alg, key, iv, op, input_):
     cipher = EVP.Cipher(alg=alg, key=key, iv=iv, op=op)
-    del key
     return cipher.update(input_) + cipher.final()
