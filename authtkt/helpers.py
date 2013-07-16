@@ -1,13 +1,11 @@
-from yoconfig.util import get_config
-
 from authtkt.encrypted import EncryptedAuthTkt
 from authtkt.ticket import validate
 
 
-def get_ticket_data(ticket, decrypt=True):
+def get_ticket_data(ticket, authtkt_secret, crypted_cookie_secret=None):
     """We store user information in our session hashes. You can retreive that
     data with this function."""
-    ticket = validate(ticket, get_config('AUTHTKT_SECRET'))
+    ticket = validate(ticket, authtkt_secret)
 
     if not ticket:
         return None
@@ -17,8 +15,8 @@ def get_ticket_data(ticket, decrypt=True):
         'tokens': ticket.tokens,
     }
 
-    if decrypt:
-        ticket = EncryptedAuthTkt(ticket, get_config('CRYPTED_COOKIE_SECRET'))
+    if crypted_cookie_secret:
+        ticket = EncryptedAuthTkt(ticket, crypted_cookie_secret)
         data.update(ticket.data)
 
     return data
