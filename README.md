@@ -1,23 +1,21 @@
 # mod_auth_tkt cookie implementation
 
-This module has two required settings:
+## Modules
 
-* `CRYPTO_SECRET`
-* `SECRET`
+`authtkt.ticket` is a Python re-implementation of the [mod_auth_tkt][]
+cookie. Cookies can be created with `AuthTkt` and verified with
+`verify`.
 
-The settings can be specified globally using yoconfig's configure method
-like so:
+[mod_auth_tkt]: http://www.openfusion.com.au/labs/mod_auth_tkt/
 
-```python
-from yoconfig.util import configure
-configure(SECRET='secret', CRYPTO_SECRET='crypto_secret')
-```
+`authtkt.encrypted`'s `EncryptedAuthTkt` is a wrapper around `AuthTkt`
+that stores an encrypted JSON payload in the mod_auth_tkt cookie's
+user-data section.
 
-In Django projects, `SECRET` and `CRYPTO_SECRET` can be defined in the
-project's settings module. There is no need to call `configure`.
+## Helpers
 
-In most cases, these values should be set to DeployConfig's
-`common.authtkt.secret_key` and `common.authtkt.crypto_key`.
+There is a `get_ticket_data` function in `authtkt.helepers`, that
+decrypts and verifies a cookie.
 
 ## Testing
 
