@@ -20,9 +20,7 @@ class EncryptedAuthTkt(object):
     def from_data(authtkt_secret, payload_secret, uid, data=None, ip='0.0.0.0',
                   tokens=(), base64=True, ts=None):
         payload_secret = str(payload_secret)
-        if data is None:
-            data = {}
-        data = _encrypt_userdata(data, payload_secret)
+        data = _encrypt_userdata(data or {}, payload_secret)
         authticket = AuthTkt(authtkt_secret, uid, data, ip, tokens, base64, ts)
         return EncryptedAuthTkt(authticket, payload_secret)
 

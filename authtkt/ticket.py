@@ -27,7 +27,7 @@ def validate(ticket, secret, ip='0.0.0.0'):
     digest, raw = raw[:32], raw[32:]
     ts, raw = raw[:8], raw[8:]
     uid, extra = raw.split('!', 1)
-    tokens, data = '', ''
+    tokens = data = ''
 
     try:
         ts = int(ts, 16)
@@ -56,18 +56,13 @@ class AuthTkt(object):
         self.ip = ip
         self.tokens = ','.join(tok.strip() for tok in tokens)
         self.base64 = base64
-
-        if ts is None:
-            self.ts = int(time())
-        else:
-            self.ts = int(ts)
+        self.ts = int(time() if ts is None else ts)
 
     def ticket(self):
         v = self.cookie_value()
         if self.base64:
             return v.encode('base64').strip().replace('\n', '')
-        else:
-            return v
+        return v
 
     def cookie(self, name, **kwargs):
         c = Cookie.SimpleCookie()
