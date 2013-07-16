@@ -40,9 +40,9 @@ def validate(ticket, secret, ip='0.0.0.0'):
         else:
             data = extra
 
-    at = AuthTkt(secret, uid, data, ip, tokens.split(','), base64, ts)
-    if at.ticket() == ticket:
-        return at
+    auth_ticket = AuthTkt(secret, uid, data, ip, tokens.split(','), base64, ts)
+    if auth_ticket.ticket() == ticket:
+        return auth_ticket
 
     return False
 

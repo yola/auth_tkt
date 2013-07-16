@@ -21,29 +21,29 @@ class EncryptedAuthTkt(object):
                   tokens=(), base64=True, ts=None):
         payload_secret = str(payload_secret)
         data = _encrypt_userdata(data or {}, payload_secret)
-        authticket = AuthTkt(authtkt_secret, uid, data, ip, tokens, base64, ts)
-        return EncryptedAuthTkt(authticket, payload_secret)
+        auth_ticket = AuthTkt(authtkt_secret, uid, data, ip, tokens, base64, ts)
+        return EncryptedAuthTkt(auth_ticket, payload_secret)
 
-    def __init__(self, authticket, payload_secret):
-        self.authticket = authticket
+    def __init__(self, auth_ticket, payload_secret):
+        self.auth_ticket = auth_ticket
         self._payload_secret = payload_secret
 
     @property
     def uid(self):
-        return self.authticket.uid
+        return self.auth_ticket.uid
 
     @property
     def data(self):
-        return _decrypt_userdata(self.authticket.data, self._payload_secret)
+        return _decrypt_userdata(self.auth_ticket.data, self._payload_secret)
 
     def ticket(self):
-        return self.authticket.ticket()
+        return self.auth_ticket.ticket()
 
     def cookie(self, name, **kwargs):
-        return self.authticket.cookie(name, **kwargs)
+        return self.auth_ticket.cookie(name, **kwargs)
 
     def cookie_value(self):
-        return self.authticket.cookie_value()
+        return self.auth_ticket.cookie_value()
 
 
 def _derive_keys(secret, salt=None):

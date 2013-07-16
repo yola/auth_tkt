@@ -10,17 +10,17 @@ class EncryptedAuthTktTests(unittest.TestCase):
     def test_construction(self):
         tkt = AuthTkt('secret', '123')
         etkt = EncryptedAuthTkt(tkt, 'cryptosecret')
-        self.assertEqual(etkt.authticket, tkt)
+        self.assertEqual(etkt.auth_ticket, tkt)
 
     def test_from_data_empty(self):
         etkt = EncryptedAuthTkt.from_data('secret', 'cryptosecret', '123')
-        self.assertTrue(isinstance(etkt.authticket, AuthTkt))
+        self.assertTrue(isinstance(etkt.auth_ticket, AuthTkt))
         self.assertEqual(etkt.data, {})
 
     def test_from_data_dict(self):
         etkt = EncryptedAuthTkt.from_data('secret', 'cryptosecret', '123',
                                           {'foo': 'bar'})
-        self.assertTrue(isinstance(etkt.authticket, AuthTkt))
+        self.assertTrue(isinstance(etkt.auth_ticket, AuthTkt))
         self.assertEqual(etkt.data, {'foo': 'bar'})
 
     def test_tkt_attributes(self):
