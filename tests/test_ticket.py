@@ -65,6 +65,11 @@ class AuthTktTests(unittest.TestCase):
             self.assertFalse(c[key])
         self.assertEqual(c.value, tkt.cookie_value())
 
+    def test_cookie_unicode(self):
+        tkt = self.construct()
+        cookies = tkt.cookie(u'test_cookie', domain=u'example.com')
+        self.assertTrue('test_cookie' in cookies)
+
     def test_ticket(self):
         tkt = self.construct(base64=False)
         self.assertEqual(tkt.ticket(), tkt.cookie_value())
@@ -72,6 +77,12 @@ class AuthTktTests(unittest.TestCase):
     def test_ticket_b64(self):
         tkt = self.construct()
         self.assertEqual(tkt.ticket().decode('base64'), tkt.cookie_value())
+
+    def test_construct_unicode(self):
+        tkt = self.construct(u'secret', u'123', data=u'userdata',
+                             ip=u'0.0.0.0', tokens=(u'foo', u'bar'),
+                             base64=False)
+        self.assertEqual(tkt.ticket(), tkt.cookie_value())
 
 
 class AuthTktInternalTests(unittest.TestCase):

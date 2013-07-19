@@ -27,7 +27,7 @@ class EncryptedAuthTkt(object):
 
     def __init__(self, auth_ticket, payload_secret):
         self.auth_ticket = auth_ticket
-        self._payload_secret = payload_secret
+        self._payload_secret = str(payload_secret)
 
     @property
     def uid(self):

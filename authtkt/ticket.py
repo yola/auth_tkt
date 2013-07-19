@@ -50,7 +50,7 @@ def validate(ticket, secret, ip='0.0.0.0'):
 class AuthTkt(object):
     def __init__(self, secret, uid, data='', ip='0.0.0.0', tokens=(),
                  base64=True, ts=None):
-        self.secret = secret
+        self.secret = str(secret)
         self.uid = str(uid)
         self.data = data
         self.ip = ip
@@ -65,6 +65,7 @@ class AuthTkt(object):
         return v
 
     def cookie(self, name, **kwargs):
+        name = str(name)
         c = Cookie.SimpleCookie()
         c[name] = self.ticket()
 
