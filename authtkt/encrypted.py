@@ -21,7 +21,8 @@ class EncryptedAuthTkt(object):
                   tokens=(), base64=True, ts=None):
         payload_secret = str(payload_secret)
         data = _encrypt_userdata(data or {}, payload_secret)
-        auth_ticket = AuthTkt(authtkt_secret, uid, data, ip, tokens, base64, ts)
+        auth_ticket = AuthTkt(authtkt_secret, uid, data, ip, tokens, base64,
+                              ts)
         return EncryptedAuthTkt(auth_ticket, payload_secret)
 
     def __init__(self, auth_ticket, payload_secret):

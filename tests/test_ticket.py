@@ -15,8 +15,8 @@ class AuthTktTests(unittest.TestCase):
         self.assertTrue(tkt.ts > 0)
 
     def test_construction_optional(self):
-        tkt = AuthTkt('secret', '123', 'userdata', '127.0.0.1', ('foo ', 'bar'),
-                      False, 9001)
+        tkt = AuthTkt('secret', '123', 'userdata', '127.0.0.1',
+                      ('foo ', 'bar'), False, 9001)
         self.assertEqual(tkt.secret, 'secret')
         self.assertEqual(tkt.uid, '123')
         self.assertEqual(tkt.data, 'userdata')
@@ -49,8 +49,8 @@ class AuthTktTests(unittest.TestCase):
         id_ = '123'
         tokens = 'foo,bar'
         userdata = 'userdata'
-        self.assertEqual(body, digest + ip + ts + id_ + '!' + tokens
-                               + '!' + userdata)
+        self.assertEqual(body, digest + ip + ts + id_ + '!' + tokens + '!'
+                         + userdata)
 
     def test_cookie(self):
         tkt = self.construct(base64=False)
@@ -94,9 +94,9 @@ class ValidateTests(unittest.TestCase):
     def test_garbage(self):
         self.assertFalse(validate('blergh', self.secret))
 
-    def build_ticket(self, digest='575cd7937781c0636da95f0f4f423aef', ip='0000',
-                     ts='2329', id_='123', tokens='foo,bar', data='userdata',
-                     base64=False):
+    def build_ticket(self, digest='575cd7937781c0636da95f0f4f423aef',
+                     ip='0000', ts='2329', id_='123', tokens='foo,bar',
+                     data='userdata', base64=False):
         if tokens:
             ticket = digest + ip + ts + id_ + '!' + tokens + '!' + data
         else:
