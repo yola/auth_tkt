@@ -1,7 +1,7 @@
 from setuptools import setup
 
 setup(
-    name='authkt',
+    name='authtkt',
     version='0.0.1',
     description='Python implementation of mod_auth_tkt cookies',
     author='Yola',
