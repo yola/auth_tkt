@@ -25,13 +25,15 @@ class AuthTktTests(unittest.TestCase):
         self.assertFalse(tkt.base64)
         self.assertEqual(tkt.ts, 9001)
 
-    def construct(self, tokens=True, base64=True):
-        tokens = ('foo', 'bar') if tokens else ()
-        return AuthTkt('secret', '123', 'userdata', tokens=tokens,
-                       base64=base64, ts=9001)
+    def construct(self, secret='secret', uid='123', **kwargs):
+        if kwargs.get('tokens') is True:
+            kwargs['tokens'] = ('foo', 'bar')
+        kwargs.setdefault('data', 'userdata')
+        kwargs.setdefault('ts', 9001)
+        return AuthTkt(secret, uid, **kwargs)
 
     def test_cookie_value(self):
-        tkt = self.construct(tokens=False)
+        tkt = self.construct()
         body = tkt.cookie_value()
         digest = '7f31d235ecc1a1c566ebd51469ed8a59'
         ip = '0000'  # 0.0.0.0
