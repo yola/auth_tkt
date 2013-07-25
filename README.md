@@ -1,5 +1,7 @@
 # mod_auth_tkt cookie implementation
 
+[![Build Status](https://travis-ci.org/yola/authtkt.png)](https://travis-ci.org/yola/authtkt)
+
 ## Modules
 
 `authtkt.ticket` is a Python re-implementation of the [mod_auth_tkt][]
