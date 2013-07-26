@@ -1,6 +1,6 @@
 import unittest
 
-from authtkt.ticket import AuthTkt, validate
+from auth_tkt.ticket import AuthTkt, validate
 
 
 class AuthTktTests(unittest.TestCase):
