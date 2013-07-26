@@ -5,7 +5,7 @@ import json
 
 from M2Crypto import EVP, Rand
 
-from authtkt.ticket import AuthTkt
+from auth_tkt.ticket import AuthTkt
 
 
 class DecryptionError(Exception):

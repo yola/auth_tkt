@@ -1,6 +1,6 @@
 import unittest
 
-from authtkt.helpers import get_ticket_data
+from auth_tkt.helpers import get_ticket_data
 
 
 class IntegrationTests(unittest.TestCase):
