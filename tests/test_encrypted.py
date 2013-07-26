@@ -1,9 +1,10 @@
 import unittest
 
-from authtkt.ticket import AuthTkt
-from authtkt.encrypted import (EncryptedAuthTkt, DecryptionError, _derive_keys,
-                               _encrypt_userdata, _decrypt_userdata, _encipher,
-                               _decipher)
+from auth_tkt.ticket import AuthTkt
+from auth_tkt.encrypted import (EncryptedAuthTkt, DecryptionError,
+                                _derive_keys, _encrypt_userdata,
+                                _decrypt_userdata, _encipher,
+                                _decipher)
 
 
 class EncryptedAuthTktTests(unittest.TestCase):

@@ -1,5 +1,5 @@
-from authtkt.encrypted import EncryptedAuthTkt
-from authtkt.ticket import validate
+from auth_tkt.encrypted import EncryptedAuthTkt
+from auth_tkt.ticket import validate
 
 
 def get_ticket_data(ticket, authtkt_secret, crypted_cookie_secret=None):
