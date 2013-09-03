@@ -1,3 +1,7 @@
+# Copyright (c) 2009-2013, Yola, Inc.
+# Copyright (c) 2005, Imaginary Landscape LLC and Contributors
+# The AuthTkt class is derived from Ian Bicking's Python port (now shipped with mod_auth_tkt)
+
 """
 :class:AuthTkt: is based on `mod_auth_tkt-2.1.0/contrib/auth_ticket.py` from
 http://www.openfusion.com.au/labs/dist/mod_auth_tkt/mod_auth_tkt-2.1.0.tar.gz
