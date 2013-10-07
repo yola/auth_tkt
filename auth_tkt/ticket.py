@@ -1,3 +1,7 @@
+# Copyright (c) 2009-2013, Yola, Inc.
+# Copyright (c) 2005, Imaginary Landscape LLC and Contributors
+# The AuthTkt class is derived from Ian Bicking's Python port (now shipped with mod_auth_tkt)
+
 from time import time
 import Cookie
 import binascii
