@@ -17,15 +17,15 @@ class IntegrationTests(unittest.TestCase):
 
     def test_get_ticket_with_data(self):
         data = get_ticket_data(self.cookie, self.authtkt_secret,
-                               self.crypted_cookie_secret)
+                               self.crypted_cookie_secret, timeout=0)
         self.assertEqual(sorted(data), ['id', 'name', 'surname', 'tokens'])
 
     def test_get_ticket_no_decrypt(self):
-        data = get_ticket_data(self.cookie, self.authtkt_secret)
+        data = get_ticket_data(self.cookie, self.authtkt_secret, timeout=0)
         self.assertEqual(sorted(data), ['id', 'tokens'])
 
     def test_get_ticket_unicode(self):
         data = get_ticket_data(unicode(self.cookie),
                                unicode(self.authtkt_secret),
-                               unicode(self.crypted_cookie_secret))
+                               unicode(self.crypted_cookie_secret), 0)
         self.assertEqual(sorted(data), ['id', 'name', 'surname', 'tokens'])

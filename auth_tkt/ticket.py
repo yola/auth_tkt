@@ -10,7 +10,7 @@ import socket
 import struct
 
 
-def validate(ticket, secret, ip='0.0.0.0'):
+def validate(ticket, secret, ip='0.0.0.0', timeout=7200):
     """Validate a given authtkt ticket for the secret and ip provided"""
     if len(ticket) < 40:
         return False
@@ -36,6 +36,9 @@ def validate(ticket, secret, ip='0.0.0.0'):
     try:
         ts = int(ts, 16)
     except ValueError:
+        return False
+
+    if timeout and time() - ts > timeout:
         return False
 
     if extra:
