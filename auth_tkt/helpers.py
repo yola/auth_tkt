@@ -2,10 +2,11 @@ from auth_tkt.encrypted import EncryptedAuthTkt
 from auth_tkt.ticket import validate
 
 
-def get_ticket_data(ticket, authtkt_secret, crypted_cookie_secret=None):
+def get_ticket_data(ticket, authtkt_secret, crypted_cookie_secret=None,
+                    timeout=7200):
     """We store user information in our session hashes. You can retreive that
     data with this function."""
-    ticket = validate(ticket, authtkt_secret)
+    ticket = validate(ticket, authtkt_secret, timeout=timeout)
 
     if not ticket:
         return None

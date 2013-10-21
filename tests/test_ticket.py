@@ -120,74 +120,78 @@ class ValidateTests(unittest.TestCase):
 
     def test_valid(self):
         body = self.build_ticket()
-        tkt = validate(body, self.secret)
+        tkt = validate(body, self.secret, timeout=0)
         self.assertTrue(tkt)
         self.assertTrue(isinstance(tkt, AuthTkt))
 
     def test_valid_b64(self):
         body = self.build_ticket(base64=True)
-        self.assertTrue(validate(body, self.secret))
+        self.assertTrue(validate(body, self.secret, timeout=0))
 
     def test_wrong_digest(self):
         body = self.build_ticket(digest='1234567890abcdef' * 2)
-        self.assertFalse(validate(body, self.secret))
+        self.assertFalse(validate(body, self.secret, timeout=0))
 
     def test_wrong_digest_b64(self):
         body = self.build_ticket(digest='1234567890abcdef' * 2, base64=True)
-        self.assertFalse(validate(body, self.secret))
+        self.assertFalse(validate(body, self.secret, timeout=0))
 
     def test_invalid_digest(self):
         body = self.build_ticket(digest='\x00\xff' * 16)
-        self.assertFalse(validate(body, self.secret))
+        self.assertFalse(validate(body, self.secret, timeout=0))
 
     def test_invalid_digest_b64(self):
         body = self.build_ticket(digest='\x00\xff' * 16, base64=True)
-        self.assertFalse(validate(body, self.secret))
+        self.assertFalse(validate(body, self.secret, timeout=0))
 
     def test_wrong_ip(self):
         body = self.build_ticket(ip='1234')
-        self.assertFalse(validate(body, self.secret))
+        self.assertFalse(validate(body, self.secret, timeout=0))
 
     def test_wrong_ip_b64(self):
         body = self.build_ticket(ip='1234', base64=True)
-        self.assertFalse(validate(body, self.secret))
+        self.assertFalse(validate(body, self.secret, timeout=0))
 
     def test_wrong_ts(self):
         body = self.build_ticket(ts='0000')
-        self.assertFalse(validate(body, self.secret))
+        self.assertFalse(validate(body, self.secret, timeout=0))
 
     def test_wrong_ts_b64(self):
         body = self.build_ticket(ts='0000', base64=True)
+        self.assertFalse(validate(body, self.secret, timeout=0))
+
+    def test_timed_out(self):
+        body = self.build_ticket()
         self.assertFalse(validate(body, self.secret))
 
     def test_wrong_id(self):
         body = self.build_ticket(id_='124')
-        self.assertFalse(validate(body, self.secret))
+        self.assertFalse(validate(body, self.secret, timeout=0))
 
     def test_wrong_id_b64(self):
         body = self.build_ticket(id_='124', base64=True)
-        self.assertFalse(validate(body, self.secret))
+        self.assertFalse(validate(body, self.secret, timeout=0))
 
     def test_no_tokens(self):
         body = self.build_ticket(tokens=None)
-        self.assertFalse(validate(body, self.secret))
+        self.assertFalse(validate(body, self.secret, timeout=0))
 
     def test_no_tokens_b64(self):
         body = self.build_ticket(tokens=None, base64=True)
-        self.assertFalse(validate(body, self.secret))
+        self.assertFalse(validate(body, self.secret, timeout=0))
 
     def test_wrong_tokens(self):
         body = self.build_ticket(tokens='foo,baz')
-        self.assertFalse(validate(body, self.secret))
+        self.assertFalse(validate(body, self.secret, timeout=0))
 
     def test_wrong_tokens_b64(self):
         body = self.build_ticket(tokens='foo,baz', base64=True)
-        self.assertFalse(validate(body, self.secret))
+        self.assertFalse(validate(body, self.secret, timeout=0))
 
     def test_wrong_userdata(self):
         body = self.build_ticket(data='!' * 32)
-        self.assertFalse(validate(body, self.secret))
+        self.assertFalse(validate(body, self.secret, timeout=0))
 
     def test_wrong_userdata_b64(self):
         body = self.build_ticket(data='!' * 32, base64=True)
-        self.assertFalse(validate(body, self.secret))
+        self.assertFalse(validate(body, self.secret, timeout=0))
