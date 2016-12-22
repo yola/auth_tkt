@@ -6,7 +6,9 @@ import json
 import os
 
 from cryptography.hazmat.backends import default_backend
+from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.primitives.ciphers import algorithms, Cipher, modes
+from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
 
 from auth_tkt.compat import to_bytes
 from auth_tkt.ticket import AuthTkt
@@ -62,8 +64,9 @@ def _derive_keys(secret, salt=None):
         salt = os.urandom(32)
 
     # derive 256 bit encryption key using the pbkdf2 standard
-    key = hashlib.pbkdf2_hmac(
-        'sha1', secret, salt, 1000, dklen=32)
+    key = PBKDF2HMAC(
+        algorithm=hashes.SHA1, length=32, salt=salt, iterations=1000,
+        backend=BACKEND).derive(secret)
 
     # Derive encryption key and HMAC key from it
     # See Practical Cryptography section 8.4.1.
