@@ -4,6 +4,7 @@
 
 * Replaced use of M2Crypto with Cryptography library
 * Added python3 support
+* Drop support for python 2.6
 
 ## 0.1.0
 
