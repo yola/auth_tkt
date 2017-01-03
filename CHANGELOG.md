@@ -1,6 +1,6 @@
 # Changelog
 
-## Dev
+## 0.2.0
 
 * Replaced use of M2Crypto with Cryptography library
 * Added python3 support
