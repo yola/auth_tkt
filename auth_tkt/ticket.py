@@ -9,7 +9,12 @@ import socket
 import struct
 from time import time
 
-from six.moves import http_cookies
+try:
+    # Python 2
+    import Cookie as http_cookies
+except ImportError:
+    # Python 3
+    import http.cookies as http_cookies
 
 from auth_tkt.compat import base64decode, base64encode, to_bytes
 
