@@ -14,18 +14,23 @@ class IntegrationTests(unittest.TestCase):
             'DYWFDODM3NXdjS1RTbERVUlVUZlV6TUxWZHRZSVpic0JxeGxuRDgyWHBjeE9ORjZB'
             'Y3pvQjlkNkU0N0xScGVVNjNmUTFpdFhOcFkwRExyUG8xdnlGWUtxZHNRTHBYUHc9P'
             'Q==')
+        # Encoding of the encrypted data
+        self.encoding = 'latin_1'
 
     def test_get_ticket_with_data(self):
         data = get_ticket_data(self.cookie, self.authtkt_secret,
-                               self.crypted_cookie_secret, timeout=0)
+                               self.crypted_cookie_secret, timeout=0,
+                               encoding=self.encoding)
         self.assertEqual(sorted(data), ['id', 'name', 'surname', 'tokens'])
 
     def test_get_ticket_no_decrypt(self):
-        data = get_ticket_data(self.cookie, self.authtkt_secret, timeout=0)
+        data = get_ticket_data(
+            self.cookie, self.authtkt_secret, timeout=0,
+            encoding=self.encoding)
         self.assertEqual(sorted(data), ['id', 'tokens'])
 
     def test_get_ticket_unicode(self):
-        data = get_ticket_data(unicode(self.cookie),
-                               unicode(self.authtkt_secret),
-                               unicode(self.crypted_cookie_secret), 0)
+        data = get_ticket_data(
+            u'%s' % self.cookie, u'%s' % self.authtkt_secret,
+            u'%s' % self.crypted_cookie_secret, 0, encoding=self.encoding)
         self.assertEqual(sorted(data), ['id', 'name', 'surname', 'tokens'])
