@@ -8,7 +8,6 @@ import hashlib
 import socket
 import struct
 from time import time
-from pprint import pprint
 
 try:
     # Python 2
@@ -85,7 +84,7 @@ class AuthTkt(object):
         self.tokens = ','.join(tok.strip() for tok in tokens)
         self.base64 = base64
         self.ts = int(time() if ts is None else ts)
-        
+
         self.hash_algo = hashlib.md5
 
         if algo == 'SHA256':
