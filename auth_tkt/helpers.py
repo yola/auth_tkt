@@ -3,11 +3,11 @@ from auth_tkt.ticket import validate
 
 
 def get_ticket_data(ticket, authtkt_secret, crypted_cookie_secret=None,
-                    timeout=7200, encoding='utf-8'):
+                    timeout=7200, encoding='utf-8', algo='MD5'):
     """We store user information in our session hashes. You can retreive that
     data with this function."""
     ticket = validate(
-        ticket, authtkt_secret, timeout=timeout, encoding=encoding)
+        ticket, authtkt_secret, timeout=timeout, encoding=encoding, algo=algo)
 
     if not ticket:
         return None

@@ -8,6 +8,7 @@ import hashlib
 import socket
 import struct
 from time import time
+from pprint import pprint
 
 try:
     # Python 2
@@ -19,7 +20,7 @@ except ImportError:
 from auth_tkt.compat import base64decode, base64encode, to_bytes
 
 
-def validate(ticket, secret, ip='0.0.0.0', timeout=7200, encoding='utf-8'):
+def validate(ticket, secret, ip='0.0.0.0', timeout=7200, encoding='utf-8', algo='MD5'):
     """Validate a given authtkt ticket for the secret and ip provided"""
     if len(ticket) < 40:
         return False
@@ -29,7 +30,7 @@ def validate(ticket, secret, ip='0.0.0.0', timeout=7200, encoding='utf-8'):
 
     if '!' not in ticket:
         try:
-            raw = base64decode(ticket, encoding)
+            raw = base64decode(ticket, encoding=encoding)
             base64 = True
         except binascii.Error:
             return False
@@ -37,10 +38,18 @@ def validate(ticket, secret, ip='0.0.0.0', timeout=7200, encoding='utf-8'):
     if '!' not in raw:
         return False
 
-    raw = raw[32:]
+    if algo == 'SHA512':
+        raw = raw[128:]
+    elif algo == 'SHA256':
+        raw = raw[48:]
+    else:
+        raw = raw[32:]
+
     ts, raw = raw[:8], raw[8:]
     uid, extra = raw.split('!', 1)
     tokens = data = ''
+
+
 
     try:
         ts = int(ts, 16)
@@ -58,7 +67,7 @@ def validate(ticket, secret, ip='0.0.0.0', timeout=7200, encoding='utf-8'):
 
     auth_ticket = AuthTkt(
         secret, uid, data, ip, tokens.split(','), base64, ts,
-        encoding=encoding)
+        encoding=encoding, algo=algo)
     if auth_ticket.ticket() == ticket:
         return auth_ticket
 
@@ -67,7 +76,7 @@ def validate(ticket, secret, ip='0.0.0.0', timeout=7200, encoding='utf-8'):
 
 class AuthTkt(object):
     def __init__(self, secret, uid, data='', ip='0.0.0.0', tokens=(),
-                 base64=True, ts=None, encoding='utf-8'):
+                 base64=True, ts=None, encoding='utf-8', algo='MD5'):
         self.secret = str(secret)
         self.uid = str(uid)
         self.data = data
@@ -76,6 +85,14 @@ class AuthTkt(object):
         self.tokens = ','.join(tok.strip() for tok in tokens)
         self.base64 = base64
         self.ts = int(time() if ts is None else ts)
+        self.algo = algo
+
+        self.hash_algo = hashlib.md5
+
+        if algo == 'SHA256':
+            self.hash_algo = hashlib.sha256
+        if algo == 'SHA512':
+            self.hash_algo = hashlib.sha512
 
     def ticket(self):
         v = self.cookie_value()
@@ -103,14 +120,14 @@ class AuthTkt(object):
     def _digest(self):
         parts = [self._digest0(), self.secret]
         parts = b''.join([to_bytes(part) for part in parts])
-        return hashlib.md5(parts).hexdigest()
+        return self.hash_algo(parts).hexdigest()
 
     def _digest0(self):
         parts = (
             self._encode_ip(self.ip), self._encode_ts(self.ts),
             to_bytes(self.secret), to_bytes(self.uid), b'\0',
             to_bytes(self.tokens), b'\0', to_bytes(self.data))
-        return hashlib.md5(b''.join(parts)).hexdigest()
+        return self.hash_algo(b''.join(parts)).hexdigest()
 
     def _encode_ip(self, ip):
         return socket.inet_aton(ip)
