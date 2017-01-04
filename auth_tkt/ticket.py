@@ -85,8 +85,7 @@ class AuthTkt(object):
         self.tokens = ','.join(tok.strip() for tok in tokens)
         self.base64 = base64
         self.ts = int(time() if ts is None else ts)
-        self.algo = algo
-
+        
         self.hash_algo = hashlib.md5
 
         if algo == 'SHA256':
