@@ -40,7 +40,7 @@ def validate(ticket, secret, ip='0.0.0.0', timeout=7200, encoding='utf-8', algo=
     if algo == 'SHA512':
         raw = raw[128:]
     elif algo == 'SHA256':
-        raw = raw[48:]
+        raw = raw[64:]
     else:
         raw = raw[32:]
 
