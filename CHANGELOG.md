@@ -1,6 +1,6 @@
 # Changelog
 
-## DEV
+## 0.2.1
 
 * Increased maximum allowed version of Cryptography library.
   Now it requires cryptography < 3.0.
