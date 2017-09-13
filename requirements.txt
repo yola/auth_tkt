@@ -1,4 +1,4 @@
-cryptography < 2.0.0
-nose < 2.0.0
-pep8 < 2.0.0
-pyflakes < 1.0.0
+cryptography == 2.0.3
+nose == 1.3.7
+pep8 == 1.7.0
+pyflakes == 1.5.0

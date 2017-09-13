@@ -1,5 +1,10 @@
 # Changelog
 
+## DEV
+
+* Increased maximum allowed version of Cryptography library.
+  Now it requires cryptography < 3.0.
+
 ## 0.2.0
 
 * Replaced use of M2Crypto with Cryptography library
