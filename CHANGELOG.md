@@ -1,10 +1,11 @@
 # Changelog
 
-## 0.2.2
+## 0.3.0
 
 * Increased maximum allowed version of Cryptography library.
   Now it requires cryptography < 4.0.
 * Added running tests on Python 3.6-3.8.
+* Stop running tests on Python 3.4.
 
 ## 0.2.1
 
