@@ -34,3 +34,9 @@ class IntegrationTests(unittest.TestCase):
             u'%s' % self.cookie, u'%s' % self.authtkt_secret,
             u'%s' % self.crypted_cookie_secret, 0, encoding=self.encoding)
         self.assertEqual(sorted(data), ['id', 'name', 'surname', 'tokens'])
+
+    def test_get_none_ticket(self):
+        data = get_ticket_data(
+            None, self.authtkt_secret, self.crypted_cookie_secret,
+            timeout=0, encoding=self.encoding)
+        self.assertEqual(data, None)

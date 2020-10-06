@@ -21,7 +21,7 @@ from auth_tkt.compat import base64decode, base64encode, to_bytes
 
 def validate(ticket, secret, ip='0.0.0.0', timeout=7200, encoding='utf-8'):
     """Validate a given authtkt ticket for the secret and ip provided"""
-    if len(ticket) < 40:
+    if not ticket or len(ticket) < 40:
         return False
 
     raw = ticket

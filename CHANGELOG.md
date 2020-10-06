@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.3.1
+* Correct error while validating a ticket.
+
 ## 0.3.0
 
 * Increased maximum allowed version of Cryptography library.
