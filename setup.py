@@ -15,5 +15,5 @@ setup(
     url='http://github.com/yola/auth_tkt',
     packages=['auth_tkt'],
     test_suite='nose.collector',
-    install_requires=['cryptography >=3.3 ,< 4.0']
+    install_requires=['cryptography >=3.3.2 ,< 4.0']
 )
