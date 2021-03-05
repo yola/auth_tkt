@@ -1,11 +1,12 @@
 # Changelog
 
-## 0.3.1
+## 0.4.0
 
 * Add restrictions on `cryptography` package to avoid 
   [CVE-2020-25659](https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2020-25659).
   python-cryptography 3.2 is vulnerable to Bleichenbacher timing attacks in the
-  RSA decryption API, via timed processing of valid PKCS#1 v1.5 ciphertext. 
+  RSA decryption API, via timed processing of valid PKCS#1 v1.5 ciphertext.
+* Drop Python 3.5 support.
 
 ## 0.3.0
 
