@@ -19,7 +19,7 @@ except ImportError:
 from auth_tkt.compat import base64decode, base64encode, to_bytes
 
 
-def validate(ticket, secret, ip='0.0.0.0', timeout=7200, encoding='utf-8'):
+def validate(ticket, secret, ip='0.0.0.0', timeout=7200, encoding='utf-8', digest='md5'):
     """Validate a given authtkt ticket for the secret and ip provided"""
     if len(ticket) < 40:
         return False
@@ -58,7 +58,7 @@ def validate(ticket, secret, ip='0.0.0.0', timeout=7200, encoding='utf-8'):
 
     auth_ticket = AuthTkt(
         secret, uid, data, ip, tokens.split(','), base64, ts,
-        encoding=encoding)
+        encoding=encoding, digest=digest)
     if auth_ticket.ticket() == ticket:
         return auth_ticket
 
@@ -67,7 +67,7 @@ def validate(ticket, secret, ip='0.0.0.0', timeout=7200, encoding='utf-8'):
 
 class AuthTkt(object):
     def __init__(self, secret, uid, data='', ip='0.0.0.0', tokens=(),
-                 base64=True, ts=None, encoding='utf-8'):
+                 base64=True, ts=None, encoding='utf-8', digest='md5'):
         self.secret = str(secret)
         self.uid = str(uid)
         self.data = data
@@ -76,6 +76,7 @@ class AuthTkt(object):
         self.tokens = ','.join(tok.strip() for tok in tokens)
         self.base64 = base64
         self.ts = int(time() if ts is None else ts)
+        self.digest = digest
 
     def ticket(self):
         v = self.cookie_value()
@@ -103,14 +104,14 @@ class AuthTkt(object):
     def _digest(self):
         parts = [self._digest0(), self.secret]
         parts = b''.join([to_bytes(part) for part in parts])
-        return hashlib.md5(parts).hexdigest()
+        return hashlib.new(self.digest, parts).hexdigest()
 
     def _digest0(self):
         parts = (
             self._encode_ip(self.ip), self._encode_ts(self.ts),
             to_bytes(self.secret), to_bytes(self.uid), b'\0',
             to_bytes(self.tokens), b'\0', to_bytes(self.data))
-        return hashlib.md5(b''.join(parts)).hexdigest()
+        return hashlib.new(self.digest, b''.join(parts)).hexdigest()
 
     def _encode_ip(self, ip):
         return socket.inet_aton(ip)

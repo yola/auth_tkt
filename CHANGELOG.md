@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.3.1
+
+* Added support for `sha256` and `sha512` digests.
+
 ## 0.3.0
 
 * Increased maximum allowed version of Cryptography library.
