@@ -37,7 +37,8 @@ def validate(ticket, secret, ip='0.0.0.0', timeout=7200, encoding='utf-8', diges
     if '!' not in raw:
         return False
 
-    raw = raw[32:]
+    hash_length = hashlib.new(digest).digest_size * 2
+    raw = raw[hash_length:]
     ts, raw = raw[:8], raw[8:]
     uid, extra = raw.split('!', 1)
     tokens = data = ''
