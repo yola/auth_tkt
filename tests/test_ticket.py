@@ -199,3 +199,10 @@ class ValidateTests(unittest.TestCase):
     def test_wrong_userdata_b64(self):
         body = self.build_ticket(data=b'!' * 32, base64encode=True)
         self.assertFalse(validate(body, self.secret, timeout=0))
+        
+    def test_various_digest_types(self):
+        for digest in ('md5', 'sha256', 'sha512'):
+            tkt = AuthTkt(self.secret, 'uid',
+                digest=digest, base64=False)
+            self.assertTrue(validate(tkt.cookie_value(), self.secret,
+                digest=digest), "%s validation failed" % digest)
