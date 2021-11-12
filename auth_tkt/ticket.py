@@ -19,7 +19,7 @@ except ImportError:
 from auth_tkt.compat import base64decode, base64encode, to_bytes
 
 
-DIGEST_HEX_LENGTH = {
+DIGEST_HEX_LENGTHS = {
     'md5': len(hashlib.md5(b'').hexdigest()),
     'sha256': len(hashlib.sha256(b'').hexdigest()),
     'sha512': len(hashlib.sha512(b'').hexdigest()),
@@ -45,7 +45,7 @@ def validate(ticket, secret, ip='0.0.0.0', timeout=7200, encoding='utf-8',
     if '!' not in raw:
         return False
 
-    hash_length = DIGEST_HEX_LENGTH[digest]
+    hash_length = DIGEST_HEX_LENGTHS[digest]
     raw = raw[hash_length:]
     ts, raw = raw[:8], raw[8:]
     uid, extra = raw.split('!', 1)
