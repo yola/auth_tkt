@@ -65,7 +65,7 @@ def _derive_keys(secret, salt=None):
 
     # derive 256 bit encryption key using the pbkdf2 standard
     key = PBKDF2HMAC(
-        algorithm=hashes.SHA1, length=32, salt=salt, iterations=1000,
+        algorithm=hashes.SHA1(), length=32, salt=salt, iterations=1000,
         backend=BACKEND).derive(secret)
 
     # Derive encryption key and HMAC key from it
