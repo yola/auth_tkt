@@ -1,5 +1,9 @@
 # Changelog
 
+## DEV
+* Increased maximum allowed version of Cryptography library.
+  Now it requires cryptography < 45.
+
 ## 0.3.1
 
 * Added support for `sha256` and `sha512` digests.
