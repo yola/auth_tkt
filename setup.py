@@ -14,6 +14,5 @@ setup(
     author_email='engineers@yola.com',
     url='http://github.com/yola/auth_tkt',
     packages=['auth_tkt'],
-    test_suite='nose.collector',
     install_requires=['cryptography < 4.0']
 )
