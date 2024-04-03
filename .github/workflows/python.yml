@@ -33,10 +33,10 @@ jobs:
   build-27:
     runs-on: ubuntu-latest
     steps:
-    - name: Test on Python 2.7
-      uses: LizardByte/setup-python-action@master
-      with:
-        python-version: '2.7'
+    -  uses: actions/checkout@v4
+    -  uses: LizardByte/setup-python-action@master
+       with:
+         python-version: '2.7'
 
     - name: Install dependencies for Python 2.7
       run: |
