@@ -14,5 +14,5 @@ setup(
     author_email='engineers@yola.com',
     url='http://github.com/yola/auth_tkt',
     packages=['auth_tkt'],
-    install_requires=['cryptography']
+    install_requires=['cryptography < 46']
 )
