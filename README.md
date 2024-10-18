@@ -27,4 +27,4 @@ Install development requirements:
 
 Tests can then be run by doing:
 
-    nosetests
+    python -m unittest discover -s tests/
