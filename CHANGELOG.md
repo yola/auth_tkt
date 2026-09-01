@@ -1,7 +1,7 @@
 # Changelog
 
 ## 1.0.0
-* Drop Python 2 support
+* Drop Python <= 3.8 support (due to cryptography requirement)
 * Switch to use cryptography >=50, < 51
 
 ## 0.3.2
