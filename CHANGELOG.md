@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.0.0
+* Drop Python 2 support
+* Switch to use cryptography >=50, < 51
+
 ## 0.3.2
 
 * Increased maximum allowed version of Cryptography library.

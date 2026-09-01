@@ -7,16 +7,9 @@ import binascii
 import hashlib
 import socket
 import struct
+from base64 import b64decode, b64encode
+from http.cookies import SimpleCookie
 from time import time
-
-try:
-    # Python 2
-    import Cookie as http_cookies
-except ImportError:
-    # Python 3
-    import http.cookies as http_cookies
-
-from auth_tkt.compat import base64decode, base64encode, to_bytes
 
 
 DIGEST_HEX_LENGTHS = {
@@ -37,7 +30,7 @@ def validate(ticket, secret, ip='0.0.0.0', timeout=7200, encoding='utf-8',
 
     if '!' not in ticket:
         try:
-            raw = base64decode(ticket, encoding)
+            raw = b64decode(ticket).decode(encoding)
             base64 = True
         except binascii.Error:
             return False
@@ -74,7 +67,7 @@ def validate(ticket, secret, ip='0.0.0.0', timeout=7200, encoding='utf-8',
     return False
 
 
-class AuthTkt(object):
+class AuthTkt:
     def __init__(self, secret, uid, data='', ip='0.0.0.0', tokens=(),
                  base64=True, ts=None, encoding='utf-8', digest='md5'):
         self.secret = str(secret)
@@ -90,12 +83,12 @@ class AuthTkt(object):
     def ticket(self):
         v = self.cookie_value()
         if self.base64:
-            return base64encode(v).strip().replace('\n', '')
+            return b64encode(v.encode()).decode()
         return v
 
     def cookie(self, name, **kwargs):
         name = str(name)
-        c = http_cookies.SimpleCookie()
+        c = SimpleCookie()
         c[name] = self.ticket()
 
         kwargs.setdefault('path', '/')
@@ -112,14 +105,15 @@ class AuthTkt(object):
 
     def _digest(self):
         parts = [self._digest0(), self.secret]
-        parts = b''.join([to_bytes(part) for part in parts])
+        parts = b''.join([part.encode() for part in parts])
         return hashlib.new(self.digest, parts).hexdigest()
 
     def _digest0(self):
         parts = (
             self._encode_ip(self.ip), self._encode_ts(self.ts),
-            to_bytes(self.secret), to_bytes(self.uid), b'\0',
-            to_bytes(self.tokens), b'\0', to_bytes(self.data))
+            self.secret.encode(), self.uid.encode(), b'\0',
+            self.tokens.encode(), b'\0', self.data.encode()
+        )
         return hashlib.new(self.digest, b''.join(parts)).hexdigest()
 
     def _encode_ip(self, ip):

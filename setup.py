@@ -20,8 +20,6 @@ setup(
     url='http://github.com/yola/auth_tkt',
     packages=['auth_tkt'],
     classifiers=[
-        'Programming Language :: Python :: 2.7',
-        'Programming Language :: Python :: 3.8',
         'Programming Language :: Python :: 3.9',
         'Programming Language :: Python :: 3.10',
         'Programming Language :: Python :: 3.11',
@@ -30,5 +28,5 @@ setup(
         'License :: OSI Approved :: MIT License',
         'Operating System :: OS Independent',
     ],
-    install_requires=['cryptography < 46']
+    install_requires=['cryptography >=50, < 51']
 )
