@@ -1,20 +1,16 @@
-import base64
-from gzip import zlib
 import hashlib
 import hmac
 import json
 import os
+import zlib
+import base64 as b64
 
-from cryptography.hazmat.backends import default_backend
+from cryptography.hazmat.decrepit.ciphers.modes import OFB
 from cryptography.hazmat.primitives import hashes
-from cryptography.hazmat.primitives.ciphers import algorithms, Cipher, modes
+from cryptography.hazmat.primitives.ciphers import algorithms, Cipher
 from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
 
-from auth_tkt.compat import to_bytes
 from auth_tkt.ticket import AuthTkt
-
-
-BACKEND = default_backend()
 
 
 class DecryptionError(Exception):
@@ -22,15 +18,14 @@ class DecryptionError(Exception):
     pass
 
 
-class EncryptedAuthTkt(object):
+class EncryptedAuthTkt:
 
     @staticmethod
     def from_data(
             authtkt_secret, payload_secret, uid, data=None, ip='0.0.0.0',
             tokens=(), base64=True, ts=None, encoding='utf-8'):
         data = json.dumps(data or {})
-        data = _encrypt_userdata(
-            to_bytes(data, encoding), to_bytes(payload_secret, encoding))
+        data = _encrypt_userdata(data.encode(encoding), payload_secret.encode(encoding))
         auth_ticket = AuthTkt(
             authtkt_secret, uid, data, ip, tokens, base64, ts,
             encoding=encoding)
@@ -38,7 +33,7 @@ class EncryptedAuthTkt(object):
 
     def __init__(self, auth_ticket, payload_secret):
         self.auth_ticket = auth_ticket
-        self._payload_secret = to_bytes(payload_secret)
+        self._payload_secret = payload_secret.encode()
 
     @property
     def uid(self):
@@ -65,8 +60,7 @@ def _derive_keys(secret, salt=None):
 
     # derive 256 bit encryption key using the pbkdf2 standard
     key = PBKDF2HMAC(
-        algorithm=hashes.SHA1(), length=32, salt=salt, iterations=1000,
-        backend=BACKEND).derive(secret)
+        algorithm=hashes.SHA1(), length=32, salt=salt, iterations=1000).derive(secret)
 
     # Derive encryption key and HMAC key from it
     # See Practical Cryptography section 8.4.1.
@@ -88,18 +82,13 @@ def _encrypt_userdata(cleartext, secret):
     # string to encrypt). Practical Cryptography by Schneier & Ferguson
     # also recommends doing it in this order in section 8.2.
     mac = hmac.new(hmacKey, cleartext + iv + salt, hashlib.sha256).hexdigest()
-    ciphertext = _encipher(
-        zlib.compress(cleartext + to_bytes(mac)), encKey, iv, algorithms.AES)
+    ciphertext = _encipher(zlib.compress(cleartext + mac.encode()), encKey, iv, algorithms.AES)
 
-    return (
-        base64.b64encode(iv + salt + ciphertext)
-        .strip()
-        .replace(b'\n', b'')
-    )
+    return b64.b64encode(iv + salt + ciphertext)
 
 
 def _decrypt_userdata(ciphertext, secret):
-    ciphertext = base64.b64decode(ciphertext)
+    ciphertext = b64.b64decode(ciphertext)
     iv, salt, ciphertext = (
         ciphertext[:16], ciphertext[16:48], ciphertext[48:])
 
@@ -110,7 +99,7 @@ def _decrypt_userdata(ciphertext, secret):
         ret = zlib.decompress(_decipher(
             ciphertext, encKey, iv, algorithms.AES))
     except (zlib.error, ValueError) as e:
-        raise DecryptionError(str(e))
+        raise DecryptionError(str(e)) from e
 
     # Check MAC
     mac = ret[-64:]
@@ -132,6 +121,6 @@ def _encipher(plaintext, key, iv, alg):
 
 def _cipherFilter(alg, key, iv, input_, decrypt=False):
     key = key[:16]  # required for AES 128
-    cipher = Cipher(alg(key), modes.OFB(iv), backend=BACKEND)
+    cipher = Cipher(alg(key), OFB(iv))
     cipher = cipher.decryptor() if decrypt else cipher.encryptor()
     return cipher.update(input_) + cipher.finalize()

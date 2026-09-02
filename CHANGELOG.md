@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.0.0
+* Drop Python <= 3.8 support (due to cryptography requirement).
+* Switch to use cryptography >=50, < 51.
+* Switch to use pytest.
+
 ## 0.3.2
 
 * Increased maximum allowed version of Cryptography library.

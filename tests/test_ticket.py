@@ -1,7 +1,6 @@
 import base64
 import unittest
 
-from auth_tkt.compat import base64decode
 from auth_tkt.ticket import AuthTkt, validate
 
 
@@ -78,7 +77,7 @@ class AuthTktTests(unittest.TestCase):
 
     def test_ticket_b64(self):
         tkt = self.construct()
-        self.assertEqual(base64decode(tkt.ticket()), tkt.cookie_value())
+        self.assertEqual(base64.b64decode(tkt.ticket()).decode(), tkt.cookie_value())
 
     def test_construct_unicode(self):
         tkt = self.construct(u'secret', u'123', data=u'userdata',
